@@ -1,5 +1,6 @@
 from __future__ import division
 
+import os
 import time
 import math
 import random
@@ -46,7 +47,7 @@ class mcts():
         self.explorationConstant = explorationConstant
         self.rollout = rolloutPolicy
 
-    def search(self, initialState):
+    def search(self, initialState, verbose=True):
         self.root = treeNode(initialState, None)
 
         if self.limitType == 'time':
@@ -57,6 +58,8 @@ class mcts():
             for i in range(self.searchLimit):
                 self.executeRound()
 
+        os.system('clear')
+        self.display_tree(self.root)
         bestChild = self.getBestChild(self.root, 0)
         return self.getAction(self.root, bestChild)
 
@@ -64,6 +67,19 @@ class mcts():
         node = self.selectNode(self.root)
         reward = self.rollout(node.state)
         self.backpropogate(node, reward)
+        os.system('clear')
+        self.display_tree(self.root)
+        #time.sleep(0.1)
+
+    def display_tree(self, node):
+        # iterate through nodes and display best tree found so far
+        print(node.state)
+        while not node.isTerminal:
+            if node.isFullyExpanded:
+                node = self.getBestChild(node, 0.)
+                print(node.state)
+            else:
+                return None
 
     def selectNode(self, node):
         while not node.isTerminal:

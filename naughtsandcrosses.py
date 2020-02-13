@@ -1,9 +1,10 @@
 from __future__ import division
 
 from copy import deepcopy
-from mcts import mcts
 from functools import reduce
 import operator
+import time
+
 
 
 class NaughtsAndCrossesState():
@@ -51,6 +52,11 @@ class NaughtsAndCrossesState():
                 return sum(diagonal) / 3
         return False
 
+    def __repr__(self):
+        s = ""
+        for row in self.board:
+            s += " ".join([{0:"#", 1:"X", -1:"O"}[x] for x in row]) + "\n" 
+        return s
 
 class Action():
     def __init__(self, player, x, y):
@@ -65,14 +71,14 @@ class Action():
         return str(self)
 
     def __eq__(self, other):
-        return self.__class__ == other.__class__ and self.x == other.x and self.y == other.y and self.player == other.player
+        return self.__class__ == other.__class__ and self.x == other.x and \
+    self.y == other.y and self.player == other.player
 
     def __hash__(self):
         return hash((self.x, self.y, self.player))
 
-
-initialState = NaughtsAndCrossesState()
-mcts = mcts(timeLimit=1000)
-action = mcts.search(initialState=initialState)
-
-print(action)
+if __name__ == "__main__":
+    from mcts import mcts
+    initialState = NaughtsAndCrossesState()
+    mcts = mcts(iterationLimit=10000)
+    action = mcts.search(initialState=initialState)
